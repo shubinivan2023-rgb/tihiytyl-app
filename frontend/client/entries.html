@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои записи — Тихий Тыл</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="back-link">&larr; Назад</a>
+        <h1>Мои записи</h1>
+
+        <div id="entriesLoading" class="loading">Загрузка...</div>
+        <div id="entriesList"></div>
+
+        <a href="diary.html" class="btn-primary">+ Создать запись</a>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5002';
+
+        async function loadEntries() {
+            const loading = document.getElementById('entriesLoading');
+            const list = document.getElementById('entriesList');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/diary/entries`);
+                const data = await response.json();
+
+                loading.classList.add('hidden');
+
+                if (data.entries.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><p>Пока нет записей. Создай первую!</p></div>';
+                    return;
+                }
+
+                data.entries.forEach(entry => {
+                    const card = document.createElement('div');
+                    card.className = 'entry-card';
+
+                    const date = new Date(entry.created_at);
+                    const dateStr = date.toLocaleString('ru-RU', {
+                        day: 'numeric',
+                        month: 'long',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const typeLabel = entry.input_type === 'voice' ? '🎤 голос' : '⌨️ текст';
+                    const preview = entry.transcription.length > 120
+                        ? entry.transcription.substring(0, 120) + '...'
+                        : entry.transcription;
+
+                    card.innerHTML = `
+                        <div class="entry-header">
+                            <span class="entry-date">${dateStr}</span>
+                            <span class="entry-emoji">${entry.emoji} ${entry.pain_level}/10</span>
+                        </div>
+                        <div class="entry-text">${preview}</div>
+                        <span class="entry-type">${typeLabel}</span>
+                    `;
+
+                    list.appendChild(card);
+                });
+            } catch (err) {
+                loading.classList.add('hidden');
+                list.innerHTML = '<div class="empty-state"><p>Не удалось загрузить записи. Проверь, что бэкенд запущен.</p></div>';
+            }
+        }
+
+        loadEntries();
+    </script>
+</body>
+</html>

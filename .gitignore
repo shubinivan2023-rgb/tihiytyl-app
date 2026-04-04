@@ -1,0 +1,19 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Database
+*.db
+database.db
+
+# Audio files (не коммитятся)
+backend/audio/
+
+# OS
+.DS_Store
+
+# Environment
+.env

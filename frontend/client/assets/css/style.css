@@ -1,0 +1,589 @@
+:root {
+    --bg-primary: #0F1923;
+    --bg-secondary: #162230;
+    --bg-card: #1A2A3A;
+    --text-primary: #E8ECF0;
+    --text-secondary: #9EACBA;
+    --accent: #4A90A4;
+    --accent-hover: #5BA3B8;
+    --accent-subtle: rgba(74, 144, 164, 0.12);
+    --border: rgba(255, 255, 255, 0.06);
+    --radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.2;
+    padding: 40px 20px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 0.9;
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 0.9;
+    margin-bottom: 24px;
+}
+
+h3 {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 0.9;
+    margin-bottom: 16px;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+/* Выбор режима */
+.mode-selection {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.mode-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+}
+
+.mode-btn {
+    padding: 16px 32px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.mode-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+}
+
+/* Голосовой режим */
+.record-btn,
+.stop-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background 0.2s;
+}
+
+.record-btn:hover {
+    background: var(--accent-hover);
+}
+
+.stop-btn {
+    background: #c44;
+}
+
+.stop-btn:hover {
+    background: #d55;
+}
+
+#recordingStatus {
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+}
+
+#recordingStatus p {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.transcription {
+    padding: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.2;
+}
+
+/* Текстовый режим */
+#textInput {
+    width: 100%;
+    min-height: 200px;
+    padding: 12px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 16px;
+    resize: vertical;
+    margin-bottom: 24px;
+    line-height: 1.2;
+}
+
+#textInput::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.6;
+}
+
+#textInput:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* Эмодзи-шкала */
+.emoji-scale {
+    margin-bottom: 24px;
+}
+
+.emoji-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.emoji-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 10px;
+    background: var(--bg-card);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 80px;
+}
+
+.emoji-btn:hover {
+    border-color: var(--accent);
+}
+
+.emoji-btn.selected {
+    border-color: var(--accent);
+    background: var(--accent-subtle);
+}
+
+.emoji-btn .emoji {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.emoji-btn .label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+/* Кнопка сохранения */
+.save-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 24px;
+    transition: background 0.2s;
+}
+
+.save-btn:hover {
+    background: var(--accent-hover);
+}
+
+/* Список записей */
+.entry-card {
+    padding: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+}
+
+.entry-card:hover {
+    border-color: rgba(74, 144, 164, 0.2);
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.entry-date {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.entry-emoji {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.entry-text {
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.entry-type {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 10px;
+    background: var(--accent-subtle);
+    color: var(--accent);
+    border-radius: 100px;
+    font-size: 12px;
+}
+
+/* Пустое состояние */
+.empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-secondary);
+}
+
+.empty-state p {
+    font-size: 16px;
+    margin-bottom: 24px;
+}
+
+/* Ссылки и кнопки */
+.view-entries,
+.btn-primary {
+    display: block;
+    padding: 12px 20px;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius);
+    text-align: center;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.view-entries:hover,
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: var(--text-primary);
+}
+
+/* Статус загрузки */
+.loading {
+    text-align: center;
+    padding: 16px;
+    color: var(--text-secondary);
+}
+
+/* Вторичная кнопка */
+.btn-secondary {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+/* Мета-информация */
+.meta {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+/* Секции категорий (техники) */
+.category {
+    margin-bottom: 32px;
+}
+
+.category h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+/* Карточки техник */
+.technique-card {
+    padding: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+}
+
+.technique-card:hover {
+    border-color: rgba(74, 144, 164, 0.2);
+}
+
+.technique-card h3 {
+    text-align: left;
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.technique-card .duration {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.technique-card .description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.2;
+    margin-bottom: 12px;
+}
+
+.technique-card .actions {
+    display: flex;
+    gap: 10px;
+}
+
+.technique-card .actions .btn-primary {
+    padding: 8px 16px;
+    font-size: 14px;
+    flex: 1;
+}
+
+/* Аудио-проигрыватель */
+.audio-player {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.play-btn,
+.pause-btn {
+    display: inline-block;
+    padding: 12px 32px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 18px;
+    cursor: pointer;
+    margin-bottom: 16px;
+    transition: background 0.2s;
+}
+
+.play-btn:hover,
+.pause-btn:hover {
+    background: var(--accent-hover);
+}
+
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-primary);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.time-display {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+/* Инструкции техники */
+.instructions {
+    padding: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 24px;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}
+
+/* Модальное окно предложения техники */
+.technique-offer {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.technique-offer h3 {
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.technique-offer p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.technique-offer .offer-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.technique-offer .offer-buttons button {
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+.technique-offer .btn-accept {
+    background: var(--accent);
+    color: white;
+}
+
+.technique-offer .btn-accept:hover {
+    background: var(--accent-hover);
+}
+
+.technique-offer .btn-skip {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+}
+
+.technique-offer .btn-skip:hover {
+    border-color: var(--accent);
+}
+
+/* Результат техники */
+.technique-result {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.technique-result .result-message {
+    font-size: 16px;
+    line-height: 1.3;
+    margin-bottom: 16px;
+}
+
+/* Утилиты */
+.hidden {
+    display: none !important;
+}
+
+/* Адаптив */
+@media (max-width: 480px) {
+    body {
+        padding: 24px 16px;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin-bottom: 24px;
+    }
+
+    .mode-buttons {
+        flex-direction: column;
+    }
+
+    .mode-btn {
+        padding: 20px;
+    }
+
+    .emoji-btn {
+        padding: 10px 8px;
+        min-width: 60px;
+    }
+
+    .emoji-btn .emoji {
+        font-size: 26px;
+    }
+
+    .emoji-btn .label {
+        font-size: 10px;
+    }
+}

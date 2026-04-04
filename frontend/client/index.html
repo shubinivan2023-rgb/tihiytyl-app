@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тихий Тыл — Приложение</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .app-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .app-nav-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+
+        .app-nav-card:hover {
+            border-color: var(--accent);
+        }
+
+        .app-nav-icon {
+            font-size: 32px;
+            min-width: 48px;
+            text-align: center;
+        }
+
+        .app-nav-text h2 {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 0.9;
+            margin-bottom: 4px;
+        }
+
+        .app-nav-text p {
+            font-size: 14px;
+            line-height: 1.2;
+            color: var(--text-secondary);
+        }
+
+        .app-nav-card.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .app-nav-card.disabled .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--accent-subtle);
+            color: var(--accent);
+            border-radius: 100px;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Тихий Тыл</h1>
+
+        <nav class="app-nav">
+            <a href="diary.html" class="app-nav-card">
+                <span class="app-nav-icon">🎤</span>
+                <div class="app-nav-text">
+                    <h2>Дневник настроения</h2>
+                    <p>Запиши голосом или текстом как прошёл день</p>
+                </div>
+            </a>
+
+            <a href="entries.html" class="app-nav-card">
+                <span class="app-nav-icon">📋</span>
+                <div class="app-nav-text">
+                    <h2>Мои записи</h2>
+                    <p>Посмотреть историю записей</p>
+                </div>
+            </a>
+
+            <a href="techniques.html" class="app-nav-card">
+                <span class="app-nav-icon">🛡️</span>
+                <div class="app-nav-text">
+                    <h2>Техники самопомощи</h2>
+                    <p>Практики для работы с состояниями</p>
+                </div>
+            </a>
+
+            <div class="app-nav-card disabled">
+                <span class="app-nav-icon">👤</span>
+                <div class="app-nav-text">
+                    <h2>Профиль <span class="badge">скоро</span></h2>
+                    <p>Настройки и связь с психологом</p>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+</body>
+</html>

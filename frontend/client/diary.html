@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дневник — Тихий Тыл</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <a href="index.html" class="back-link">&larr; Назад</a>
+        <h1>Дневник настроения</h1>
+
+        <!-- Выбор режима -->
+        <div id="modeSelection" class="mode-selection">
+            <h2>Как хочешь записать?</h2>
+            <div class="mode-buttons">
+                <button onclick="selectMode('voice')" class="mode-btn">
+                    🎤 Голосом
+                </button>
+                <button onclick="selectMode('text')" class="mode-btn">
+                    ⌨️ Текстом
+                </button>
+            </div>
+        </div>
+
+        <!-- Голосовой режим -->
+        <div id="voiceMode" class="hidden">
+            <h2>🎤 Голосовая запись</h2>
+            <button id="recordBtn" class="record-btn">Нажми и говори</button>
+            <div id="recordingStatus" class="hidden">
+                <p>Идёт запись... <span id="timer">0:00</span></p>
+                <button id="stopBtn" class="stop-btn">Остановить</button>
+            </div>
+            <div id="transcriptionLoading" class="loading hidden">Расшифровываю запись...</div>
+            <div id="transcription" class="transcription hidden">
+                <p id="transcriptionText"></p>
+            </div>
+        </div>
+
+        <!-- Текстовый режим -->
+        <div id="textMode" class="hidden">
+            <h2>⌨️ Текстовая запись</h2>
+            <textarea id="textInput" placeholder="Напиши как прошёл день..."></textarea>
+        </div>
+
+        <!-- Эмодзи-шкала -->
+        <div id="emojiScale" class="emoji-scale hidden">
+            <h3>Как себя чувствуешь?</h3>
+            <div class="emoji-buttons">
+                <button class="emoji-btn" data-value="10" data-emoji="😊">
+                    <span class="emoji">😊</span>
+                    <span class="label">Отлично</span>
+                </button>
+                <button class="emoji-btn" data-value="7" data-emoji="🙂">
+                    <span class="emoji">🙂</span>
+                    <span class="label">Хорошо</span>
+                </button>
+                <button class="emoji-btn" data-value="5" data-emoji="😐">
+                    <span class="emoji">😐</span>
+                    <span class="label">Так себе</span>
+                </button>
+                <button class="emoji-btn" data-value="3" data-emoji="🙁">
+                    <span class="emoji">🙁</span>
+                    <span class="label">Плохо</span>
+                </button>
+                <button class="emoji-btn" data-value="1" data-emoji="😢">
+                    <span class="emoji">😢</span>
+                    <span class="label">Очень плохо</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Кнопка сохранения -->
+        <button id="saveBtn" class="save-btn hidden">Сохранить</button>
+
+        <!-- Предложение техники (при оценке <= 5) -->
+        <div id="techniqueOffer" class="technique-offer hidden">
+            <h3>Хочешь попробовать технику самопомощи?</h3>
+            <p>Она может помочь улучшить состояние</p>
+            <div class="offer-buttons">
+                <button id="acceptTechnique" class="btn-accept">Да, попробуем</button>
+                <button id="skipTechnique" class="btn-skip">Нет, спасибо</button>
+            </div>
+        </div>
+
+        <!-- Сс��лка на список записей -->
+        <a href="entries.html" class="view-entries">Посмотреть записи</a>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

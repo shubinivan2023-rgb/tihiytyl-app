@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Техника — Тихий Тыл</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- Проигрыватель техники -->
+        <div id="techniquePlayer">
+            <a href="techniques.html" class="back-link">← Библиотека</a>
+            <h1 id="techniqueName"></h1>
+            <p id="techniqueDuration" class="meta" style="text-align:center"></p>
+
+            <!-- Аудио-проигрыватель -->
+            <div class="audio-player">
+                <audio id="audioElement" preload="auto">
+                    <source id="audioSource" type="audio/mpeg">
+                </audio>
+
+                <button id="playBtn" class="play-btn">▶ Начать</button>
+                <button id="pauseBtn" class="pause-btn hidden">⏸ Пауза</button>
+
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
+                <div class="time-display">
+                    <span id="currentTime">0:00</span> /
+                    <span id="totalTime">0:00</span>
+                </div>
+            </div>
+
+            <!-- Текстовые инструкции -->
+            <div id="instructions" class="instructions hidden"></div>
+
+            <!-- Кнопка досрочного завершения -->
+            <button id="finishBtn" class="btn-secondary">Закончить досрочно</button>
+        </div>
+
+        <!-- Оценка после техники -->
+        <div id="afterTechnique" class="hidden">
+            <h2 style="text-align:center">Как себя чувствуешь сейчас?</h2>
+
+            <div class="emoji-scale">
+                <div class="emoji-buttons">
+                    <button class="emoji-btn after-emoji" data-value="10" data-emoji="😊">
+                        <span class="emoji">😊</span>
+                        <span class="label">Отлично</span>
+                    </button>
+                    <button class="emoji-btn after-emoji" data-value="7" data-emoji="🙂">
+                        <span class="emoji">🙂</span>
+                        <span class="label">Хорошо</span>
+                    </button>
+                    <button class="emoji-btn after-emoji" data-value="5" data-emoji="😐">
+                        <span class="emoji">😐</span>
+                        <span class="label">Так себе</span>
+                    </button>
+                    <button class="emoji-btn after-emoji" data-value="3" data-emoji="🙁">
+                        <span class="emoji">🙁</span>
+                        <span class="label">Плохо</span>
+                    </button>
+                    <button class="emoji-btn after-emoji" data-value="1" data-emoji="😢">
+                        <span class="emoji">😢</span>
+                        <span class="label">Очень плохо</span>
+                    </button>
+                </div>
+            </div>
+
+            <button id="submitAfterBtn" class="btn-primary hidden">Продолжить</button>
+        </div>
+
+        <!-- Результат -->
+        <div id="resultScreen" class="hidden">
+            <div class="technique-result">
+                <p id="resultMessage" class="result-message"></p>
+            </div>
+            <div id="resultActions"></div>
+        </div>
+    </div>
+
+    <script src="assets/js/technique-player.js"></script>
+</body>
+</html>
