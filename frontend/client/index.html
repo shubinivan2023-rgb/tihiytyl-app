@@ -98,15 +98,46 @@
                 </div>
             </a>
 
-            <div class="app-nav-card disabled">
+            <a href="homework.html" class="app-nav-card">
+                <span class="app-nav-icon">📚</span>
+                <div class="app-nav-text">
+                    <h2>Домашние задания</h2>
+                    <p id="homeworkBadge">Загрузка...</p>
+                </div>
+            </a>
+
+            <a href="profile.html" class="app-nav-card">
                 <span class="app-nav-icon">👤</span>
                 <div class="app-nav-text">
-                    <h2>Профиль <span class="badge">скоро</span></h2>
+                    <h2>Профиль</h2>
                     <p>Настройки и связь с психологом</p>
                 </div>
-            </div>
+            </a>
         </nav>
     </div>
 
+    <script>
+    // Показать количество pending домашек
+    async function loadHomeworkBadge() {
+        try {
+            const response = await fetch('http://localhost:5002/api/homework/list/1?status=pending');
+            const data = await response.json();
+            const count = data.homework.length;
+
+            const badge = document.getElementById('homeworkBadge');
+            if (count > 0) {
+                badge.textContent = count + ' ' + (count === 1 ? 'задание' : 'заданий');
+                badge.style.color = 'var(--accent)';
+                badge.style.fontWeight = '600';
+            } else {
+                badge.textContent = 'Нет новых заданий';
+            }
+        } catch (err) {
+            document.getElementById('homeworkBadge').textContent = 'Задания от психолога';
+        }
+    }
+
+    loadHomeworkBadge();
+    </script>
 </body>
 </html>

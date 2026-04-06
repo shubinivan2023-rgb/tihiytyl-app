@@ -72,8 +72,10 @@ def get_technique_by_category(category, order=1):
 
 
 def save_technique_usage(technique_id, pain_before, pain_after, diary_entry_id=None):
+    # Шкала боли: 1 = нет боли, 10 = невыносимая
+    # Отрицательный pain_change = улучшение (боль уменьшилась)
     pain_change = pain_after - pain_before
-    helped = pain_change >= 1
+    helped = pain_change <= -1
 
     conn = get_db()
     cursor = conn.execute('''

@@ -157,10 +157,10 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
         if (data.success) {
             lastSavedEntryId = data.id;
 
-            // Если оценка <= 5 — предложить технику
-            if (selectedPainLevel <= 5) {
+            // Если боль >= 5 — получить рекомендацию и предложить технику
+            if (selectedPainLevel >= 5) {
                 saveBtn.classList.add('hidden');
-                document.getElementById('techniqueOffer').classList.remove('hidden');
+                await offerRecommendedTechnique(selectedPainLevel);
             } else {
                 window.location.href = 'entries.html';
             }
@@ -176,10 +176,59 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
     }
 });
 
-// Предложение техники — принять
+// Умные рекомендации техник
+async function offerRecommendedTechnique(painLevel) {
+    try {
+        const response = await fetch(`${API_BASE}/api/recommendations?pain_level=${painLevel}`);
+        const data = await response.json();
+
+        if (data.technique) {
+            showTechniqueOfferModal(data.technique);
+        } else {
+            // Фоллбэк — статическое предложение
+            document.getElementById('techniqueOffer').classList.remove('hidden');
+        }
+    } catch (err) {
+        // При ошибке — статическое предложение
+        document.getElementById('techniqueOffer').classList.remove('hidden');
+    }
+}
+
+function showTechniqueOfferModal(technique) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'techniqueOfferModal';
+
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h3>Хочешь попробовать технику?</h3>
+            <p>${technique.message}</p>
+            <div class="modal-actions">
+                <button class="btn-primary" id="modalAcceptBtn">
+                    Да, попробуем
+                </button>
+                <button class="btn-secondary" id="modalSkipBtn">
+                    Нет, спасибо
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('modalAcceptBtn').addEventListener('click', () => {
+        window.location.href = `technique-player.html?id=${technique.id}&pain_before=${selectedPainLevel}&entry_id=${lastSavedEntryId}&seq=1`;
+    });
+
+    document.getElementById('modalSkipBtn').addEventListener('click', () => {
+        modal.remove();
+        window.location.href = 'entries.html';
+    });
+}
+
+// Фоллбэк — статические кнопки (если рекомендации недоступны)
 document.getElementById('acceptTechnique')?.addEventListener('click', async () => {
     try {
-        // Получить первую дыхательную технику
         const response = await fetch(`${API_BASE}/api/techniques/category/breathing?order=1`);
         const tech = await response.json();
         if (tech.id) {
@@ -190,7 +239,6 @@ document.getElementById('acceptTechnique')?.addEventListener('click', async () =
     }
 });
 
-// Предложение техники — пропустить
 document.getElementById('skipTechnique')?.addEventListener('click', () => {
     window.location.href = 'entries.html';
 });

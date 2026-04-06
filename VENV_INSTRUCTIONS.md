@@ -100,7 +100,7 @@ pip install -r requirements.txt
 python app.py
 
 # Ожидаемый вывод:
-# * Running on http://0.0.0.0:5003
+# * Running on http://0.0.0.0:5002
 # * Debugger is active!
 ```
 

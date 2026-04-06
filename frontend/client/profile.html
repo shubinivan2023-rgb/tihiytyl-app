@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль — Тихий Тыл</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Профиль</h1>
+        <p class="subtitle">Настройки и связь с психологом</p>
+
+        <!-- Твой прогресс -->
+        <section class="stats-section">
+            <h2>Твой прогресс</h2>
+
+            <div class="stat-card">
+                <div class="stat-item">
+                    <span class="stat-label">Практик за неделю:</span>
+                    <span class="stat-value" id="daysPracticed">Загрузка...</span>
+                </div>
+
+                <div class="stat-item">
+                    <span class="stat-label">Тренд:</span>
+                    <span class="stat-value" id="trend">Загрузка...</span>
+                </div>
+            </div>
+
+            <!-- Техники которые помогают -->
+            <div class="techniques-help-section">
+                <h3>Техники которые помогают тебе</h3>
+                <div id="techniquesList"></div>
+            </div>
+        </section>
+
+        <!-- Связь с психологом -->
+        <section class="psychologist-section">
+            <h2>Связь с психологом</h2>
+
+            <div class="code-card">
+                <p>Твой код-позывной:</p>
+                <div class="access-code" id="accessCode">
+                    ЗАГРУЗКА...
+                </div>
+                <p class="code-hint">Назови его психологу для предоставления доступа к твоим данным</p>
+
+                <button id="regenerateBtn" class="btn-secondary">
+                    Сгенерировать новый код
+                </button>
+
+                <div class="connection-status">
+                    <span id="connectionStatus">Статус: Загрузка...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Настройки -->
+        <section class="settings-section">
+            <h2>Настройки</h2>
+
+            <div class="setting-item">
+                <span class="setting-label">Режим по умолчанию:</span>
+                <div class="mode-selector">
+                    <button id="voiceModeBtn" class="mode-btn">
+                        🎤 Голос
+                    </button>
+                    <button id="textModeBtn" class="mode-btn">
+                        ⌨️ Текст
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <a href="index.html" class="back-link">&larr; Назад на главную</a>
+    </div>
+
+    <script src="assets/js/profile.js"></script>
+</body>
+</html>

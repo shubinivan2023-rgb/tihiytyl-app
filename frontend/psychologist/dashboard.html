@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд клиента — Тихий Тыл</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+    <div class="dashboard-container">
+
+        <!-- Хедер -->
+        <header class="dashboard-header">
+            <h1>Дашборд клиента</h1>
+            <div class="header-actions">
+                <span id="clientCode" class="code-badge">Загрузка...</span>
+                <button onclick="logout()" class="btn-secondary btn-logout">Выход</button>
+            </div>
+        </header>
+
+        <!-- Общая информация -->
+        <section class="overview-section">
+            <h2>Общая информация</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Всего записей</span>
+                    <span class="stat-value" id="totalEntries">0</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Первая запись</span>
+                    <span class="stat-value" id="clientSince">—</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Средняя оценка боли</span>
+                    <span class="stat-value" id="avgPain">—</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">Последняя запись</span>
+                    <span class="stat-value" id="lastEntry">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- График динамики -->
+        <section class="chart-section">
+            <h2>Динамика состояния</h2>
+            <div class="chart-container">
+                <canvas id="painChart"></canvas>
+            </div>
+            <p class="chart-hint">
+                Шкала боли: 1 = нет боли, 10 = невыносимая.
+                Снижение графика = улучшение состояния.
+            </p>
+        </section>
+
+        <!-- Статистика техник -->
+        <section class="techniques-section">
+            <h2>Использование техник</h2>
+            <div id="techniquesTable"></div>
+        </section>
+
+        <!-- Записи дневника -->
+        <section class="entries-section">
+            <h2>Записи дневника</h2>
+            <div id="entriesTable"></div>
+            <button id="loadMoreBtn" class="btn-secondary hidden">
+                Загрузить ещё
+            </button>
+        </section>
+
+        <!-- Домашние задания -->
+        <section class="homework-section">
+            <h2>Домашние задания</h2>
+
+            <div class="homework-controls">
+                <button id="createHomeworkBtn" class="btn-primary btn-create">
+                    + Назначить домашку
+                </button>
+            </div>
+
+            <!-- Статистика -->
+            <div class="homework-stats">
+                <div class="stat-card">
+                    <span class="stat-label">Всего заданий</span>
+                    <span class="stat-value" id="hwTotal">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Выполнено</span>
+                    <span class="stat-value" id="hwCompleted">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Процент выполнения</span>
+                    <span class="stat-value" id="hwRate">0%</span>
+                </div>
+            </div>
+
+            <!-- Список домашек -->
+            <div id="homeworkTable"></div>
+        </section>
+
+    </div>
+
+    <!-- Модальное окно создания домашки -->
+    <div id="createHomeworkModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Назначить домашнее задание</h3>
+
+            <form id="createHomeworkForm">
+                <div class="form-group">
+                    <label>Название задания *</label>
+                    <input type="text" id="hwTitle" required
+                           placeholder="Практикуй дыхательную технику">
+                </div>
+
+                <div class="form-group">
+                    <label>Описание</label>
+                    <textarea id="hwDescription" rows="3"
+                              placeholder="Делай дыхание 4-7-8 каждое утро"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Связанная техника (опционально)</label>
+                    <select id="hwTechnique">
+                        <option value="">Без техники</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">Создать</button>
+                    <button type="button" onclick="closeCreateModal()" class="btn-secondary">
+                        Отмена
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

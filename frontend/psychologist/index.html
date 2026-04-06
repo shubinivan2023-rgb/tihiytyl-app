@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход для психолога — Тихий Тыл</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card">
+            <h1>Дашборд психолога</h1>
+            <p class="subtitle">Введите код-позывной клиента для доступа к данным</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="accessCode">Код-позывной:</label>
+                    <input
+                        type="text"
+                        id="accessCode"
+                        placeholder="БУРЯ-347"
+                        autocomplete="off"
+                        required
+                    >
+                    <p class="hint">Формат: СЛОВО-ЦЦЦ (например: БУРЯ-347)</p>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    Войти
+                </button>
+
+                <div id="errorMessage" class="error-message hidden"></div>
+            </form>
+        </div>
+    </div>
+
+    <script src="assets/js/login.js"></script>
+</body>
+</html>

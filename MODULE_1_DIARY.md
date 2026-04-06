@@ -474,7 +474,7 @@ def get_entries():
 
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=5003, debug=True)
+    app.run(host='0.0.0.0', port=5002, debug=True)
 ```
 
 ---
@@ -489,7 +489,7 @@ if __name__ == '__main__':
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дневник — ТихийТыл</title>
+    <title>Дневник — Тихий Тыл</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -642,7 +642,7 @@ async function sendAudioToBackend(audioBlob) {
     formData.append('audio', audioBlob);
     
     try {
-        const response = await fetch('http://localhost:5003/api/diary/voice', {
+        const response = await fetch('http://localhost:5002/api/diary/voice', {
             method: 'POST',
             body: formData
         });
@@ -707,7 +707,7 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
     
     // Отправить на бэкенд
     try {
-        const response = await fetch('http://localhost:5003/api/diary/save', {
+        const response = await fetch('http://localhost:5002/api/diary/save', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -742,7 +742,7 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои записи — ТихийТыл</title>
+    <title>Мои записи — Тихий Тыл</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -759,7 +759,7 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
         // Загрузить записи
         async function loadEntries() {
             try {
-                const response = await fetch('http://localhost:5003/api/diary/entries');
+                const response = await fetch('http://localhost:5002/api/diary/entries');
                 const data = await response.json();
                 
                 const list = document.getElementById('entriesList');
@@ -829,7 +829,7 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
 }
 
 body {
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Montserrat', -apple-system, sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
@@ -1090,7 +1090,7 @@ pip install -r requirements.txt
 python app.py
 
 # Ожидаемый вывод:
-# * Running on http://0.0.0.0:5003
+# * Running on http://0.0.0.0:5002
 # * Debugger is active!
 
 # 6. Когда закончил работу (опционально)

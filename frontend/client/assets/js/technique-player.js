@@ -131,6 +131,8 @@ document.getElementById('submitAfterBtn').addEventListener('click', async () => 
 });
 
 // Обработка результата
+// Шкала боли: 1 = нет боли, 10 = невыносимая
+// pain_change = after - before, отрицательный = улучшение (боль уменьшилась)
 function handleTechniqueResult(result) {
     const painChange = result.pain_change;
 
@@ -140,22 +142,22 @@ function handleTechniqueResult(result) {
     const messageEl = document.getElementById('resultMessage');
     const actionsEl = document.getElementById('resultActions');
 
-    if (painChange >= 2) {
-        // Значительное улучшение
-        messageEl.textContent = 'Отлично! Тебе стало значительно лучше 😊';
+    if (painChange <= -2) {
+        // Значительное улучшение (боль уменьшилась на 2+)
+        messageEl.textContent = 'Отлично! Тебе стало значительно лучше';
         actionsEl.innerHTML = `
             <a href="entries.html" class="btn-primary">К записям</a>
         `;
-    } else if (painChange >= 1 && sequenceIndex < 2) {
-        // Незначительное улучшение, можно предложить ещё
-        messageEl.textContent = 'Хорошо! Маленькие шаги 💪\nХочешь попробовать ещё одну технику?';
+    } else if (painChange <= -1 && sequenceIndex < 2) {
+        // Небольшое улучшение, можно предложить ещё
+        messageEl.textContent = 'Хорошо! Маленькие шаги\nХочешь попробовать ещё одну технику?';
         actionsEl.innerHTML = `
             <div style="display:flex; gap:10px; flex-direction:column;">
                 <button onclick="startNextTechnique()" class="btn-primary">Да, попробуем</button>
                 <a href="entries.html" class="btn-secondary" style="text-decoration:none; text-align:center;">Нет, спасибо</a>
             </div>
         `;
-    } else if (painChange < 1 && sequenceIndex < 2) {
+    } else if (painChange > -1 && sequenceIndex < 2) {
         // Не помогло, предложить другую
         messageEl.textContent = 'Эта техника не помогла. Попробуем другую?';
         actionsEl.innerHTML = `
@@ -166,8 +168,8 @@ function handleTechniqueResult(result) {
         `;
     } else {
         // Вторая техника — в любом случае завершаем
-        if (painChange >= 1) {
-            messageEl.textContent = 'Хорошо, есть небольшое улучшение 💪';
+        if (painChange <= -1) {
+            messageEl.textContent = 'Хорошо, есть небольшое улучшение';
         } else {
             messageEl.textContent = 'Техники не помогли. Рекомендуем связаться с психологом для поддержки.';
         }

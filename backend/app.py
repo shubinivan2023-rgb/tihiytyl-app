@@ -10,8 +10,23 @@ from techniques import (
     get_all_techniques, get_technique_by_id,
     get_technique_by_category, save_technique_usage
 )
+from profile import (
+    get_active_code, regenerate_code,
+    get_stats, get_preferences, update_preferences
+)
+from recommendations import get_recommendation
+from psychologist import (
+    verify_code, get_client_stats,
+    get_client_entries, get_access_info
+)
+from homework import (
+    create_homework, get_homework_list,
+    complete_homework, skip_homework,
+    delete_homework, get_homework_stats
+)
 
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'client')
+PSYCHOLOGIST_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'psychologist')
 AUDIO_DIR = os.path.join(os.path.dirname(__file__), 'audio')
 
 app = Flask(__name__, static_folder=FRONTEND_DIR)
@@ -137,6 +152,181 @@ def api_save_technique_usage():
         return jsonify({'error': str(e), 'success': False}), 500
 
 
+# === Модуль 3: Профиль клиента ===
+
+@app.route('/api/profile/access-code', methods=['GET'])
+def api_get_access_code():
+    try:
+        result = get_active_code()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/profile/access-code/regenerate', methods=['POST'])
+def api_regenerate_access_code():
+    try:
+        result = regenerate_code()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/profile/stats', methods=['GET'])
+def api_get_stats():
+    try:
+        result = get_stats()
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/profile/preferences', methods=['GET', 'POST'])
+def api_preferences():
+    if request.method == 'GET':
+        try:
+            result = get_preferences()
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        data = request.get_json(silent=True)
+        if not data or 'default_input_mode' not in data:
+            return jsonify({'error': 'Отсутствует поле: default_input_mode', 'success': False}), 400
+        try:
+            result = update_preferences(data['default_input_mode'])
+            return jsonify(result)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/recommendations', methods=['GET'])
+def api_get_recommendation():
+    pain_level = request.args.get('pain_level', type=int)
+    if not pain_level:
+        return jsonify({'error': 'pain_level required'}), 400
+    try:
+        result = get_recommendation(pain_level)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# === Модуль 4: Дашборд психолога ===
+
+@app.route('/api/psychologist/verify-code', methods=['POST'])
+def api_verify_code():
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({'valid': False, 'error': 'Нет данных'}), 400
+    code = data.get('code', '')
+    result = verify_code(code)
+    if not result['valid']:
+        return jsonify(result), 400 if result['error'] == 'Код не указан' else 200
+    return jsonify(result)
+
+
+@app.route('/api/psychologist/client-stats/<int:user_id>', methods=['GET'])
+def api_get_client_stats(user_id):
+    try:
+        result = get_client_stats(user_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/psychologist/client-entries/<int:user_id>', methods=['GET'])
+def api_get_client_entries(user_id):
+    try:
+        limit = request.args.get('limit', 50, type=int)
+        offset = request.args.get('offset', 0, type=int)
+        result = get_client_entries(user_id, limit, offset)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/psychologist/access-info/<int:access_code_id>', methods=['GET'])
+def api_get_access_info(access_code_id):
+    try:
+        result = get_access_info(access_code_id)
+        if not result:
+            return jsonify({'error': 'Код не найден'}), 404
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# === Модуль 5: Домашние задания ===
+
+@app.route('/api/homework/create', methods=['POST'])
+def api_create_homework():
+    data = request.get_json(silent=True)
+    if not data or not data.get('user_id') or not data.get('title'):
+        return jsonify({'error': 'user_id и title обязательны', 'success': False}), 400
+    try:
+        result = create_homework(
+            data['user_id'],
+            data['title'],
+            data.get('description'),
+            data.get('technique_id')
+        )
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
+@app.route('/api/homework/list/<int:user_id>', methods=['GET'])
+def api_get_homework_list(user_id):
+    try:
+        status_filter = request.args.get('status', 'all')
+        result = get_homework_list(user_id, status_filter)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/homework/complete/<int:homework_id>', methods=['POST'])
+def api_complete_homework(homework_id):
+    data = request.get_json(silent=True) or {}
+    try:
+        result = complete_homework(homework_id, data.get('notes'))
+        if not result:
+            return jsonify({'error': 'Домашка не найдена'}), 404
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
+@app.route('/api/homework/skip/<int:homework_id>', methods=['POST'])
+def api_skip_homework(homework_id):
+    try:
+        result = skip_homework(homework_id)
+        if not result:
+            return jsonify({'error': 'Домашка не найдена'}), 404
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
+@app.route('/api/homework/delete/<int:homework_id>', methods=['DELETE'])
+def api_delete_homework(homework_id):
+    try:
+        result = delete_homework(homework_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
+@app.route('/api/homework/stats/<int:user_id>', methods=['GET'])
+def api_get_homework_stats(user_id):
+    try:
+        result = get_homework_stats(user_id)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 # === Раздача аудио ===
 
 @app.route('/audio/<path:filename>')
@@ -146,6 +336,18 @@ def serve_audio(filename):
 
 # === Раздача фронтенда ===
 
+# Дашборд психолога
+@app.route('/psychologist/')
+def serve_psychologist_index():
+    return send_from_directory(PSYCHOLOGIST_DIR, 'index.html')
+
+
+@app.route('/psychologist/<path:path>')
+def serve_psychologist_static(path):
+    return send_from_directory(PSYCHOLOGIST_DIR, path)
+
+
+# Клиентский интерфейс
 @app.route('/')
 def serve_index():
     return send_from_directory(FRONTEND_DIR, 'index.html')

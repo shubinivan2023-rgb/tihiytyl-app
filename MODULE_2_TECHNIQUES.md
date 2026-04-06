@@ -219,7 +219,7 @@ function getNextTechnique() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Техника — ТихийТыл</title>
+    <title>Техника — Тихий Тыл</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -388,7 +388,7 @@ if (painChange >= 2) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Техники — ТихийТыл</title>
+    <title>Техники — Тихий Тыл</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -424,7 +424,7 @@ if (painChange >= 2) {
 // assets/js/techniques.js
 
 async function loadTechniques() {
-    const response = await fetch('http://localhost:5003/api/techniques');
+    const response = await fetch('http://localhost:5002/api/techniques');
     const data = await response.json();
     
     // Группировка по категориям
@@ -536,7 +536,7 @@ document.getElementById('uploadBtn').addEventListener('click', async () => {
     formData.append('audio', audioBlob, `technique_${techniqueId}.mp3`);
     formData.append('technique_id', techniqueId);
     
-    await fetch('http://localhost:5003/api/techniques/upload-audio', {
+    await fetch('http://localhost:5002/api/techniques/upload-audio', {
         method: 'POST',
         body: formData
     });
@@ -554,16 +554,11 @@ document.getElementById('uploadBtn').addEventListener('click', async () => {
 ### **backend/techniques.py** (новый файл)
 
 ```python
-from flask import Blueprint, request, jsonify
-import sqlite3
-import os
+from flask import request, jsonify
+from models import get_db
 
-techniques_bp = Blueprint('techniques', __name__)
-
-def get_db():
-    conn = sqlite3.connect('database.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+# Используем функции-импорты (не Blueprint)
+# Функции импортируются в app.py напрямую
 
 # API: Получить все техники
 @techniques_bp.route('/api/techniques', methods=['GET'])
@@ -710,7 +705,7 @@ def serve_audio(filename):
 
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=5003, debug=True)
+    app.run(host='0.0.0.0', port=5002, debug=True)
 ```
 
 ---
@@ -805,7 +800,7 @@ let painAfter = null;
 // Загрузить технику
 async function loadTechnique() {
     try {
-        const response = await fetch(`http://localhost:5003/api/techniques?id=${techniqueId}`);
+        const response = await fetch(`http://localhost:5002/api/techniques?id=${techniqueId}`);
         technique = await response.json();
         
         // Заполнить UI
@@ -814,7 +809,7 @@ async function loadTechnique() {
         document.getElementById('instructions').textContent = technique.instructions || '';
         
         // Установить аудио
-        document.getElementById('audioSource').src = `http://localhost:5003${technique.audio_path}`;
+        document.getElementById('audioSource').src = `http://localhost:5002${technique.audio_path}`;
         document.getElementById('audioElement').load();
         
     } catch (err) {
@@ -897,7 +892,7 @@ document.getElementById('submitAfterBtn').addEventListener('click', async () => 
     }
     
     // Сохранить использование техники
-    const response = await fetch('http://localhost:5003/api/techniques/usage', {
+    const response = await fetch('http://localhost:5002/api/techniques/usage', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
