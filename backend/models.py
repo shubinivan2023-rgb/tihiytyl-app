@@ -174,5 +174,37 @@ def init_db():
         )
     ''')
 
+    # КБТ-сессии (когда клиент отказался от техники и выбрал «поговорить»)
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS cbt_sessions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER DEFAULT 1,
+            diary_entry_id INTEGER,
+            pain_before INTEGER NOT NULL,
+            pain_after INTEGER,
+            pain_change INTEGER,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (diary_entry_id) REFERENCES diary_entries(id)
+        )
+    ''')
+
+    conn.execute('''
+        CREATE INDEX IF NOT EXISTS idx_cbt_sessions_user
+        ON cbt_sessions(user_id)
+    ''')
+
+    # Ответы на 5 КБТ-вопросов
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS cbt_answers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id INTEGER NOT NULL,
+            question_number INTEGER NOT NULL,
+            question_text TEXT NOT NULL,
+            answer TEXT,
+            skipped BOOLEAN DEFAULT 0,
+            FOREIGN KEY (session_id) REFERENCES cbt_sessions(id)
+        )
+    ''')
+
     conn.commit()
     conn.close()

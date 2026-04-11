@@ -255,6 +255,62 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// === КБТ-СЕССИИ ===
+
+async function loadCbtSessions() {
+    try {
+        const response = await fetch(`${API_BASE}/api/cbt/sessions/${userId}`);
+        const data = await response.json();
+        renderCbtSessions(data.sessions);
+    } catch (err) {
+        console.error('Ошибка загрузки КБТ-сессий:', err);
+    }
+}
+
+function renderCbtSessions(sessions) {
+    const container = document.getElementById('cbtSessionsList');
+
+    if (sessions.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">Клиент ещё не проходил КБТ-сессии</p>';
+        return;
+    }
+
+    let html = '<div class="cbt-sessions">';
+
+    sessions.forEach(session => {
+        const painChangeText = session.pain_change !== null
+            ? (session.pain_change > 0 ? '+' + session.pain_change : session.pain_change)
+            : '—';
+        const painChangeClass = session.pain_change !== null
+            ? (session.pain_change < 0 ? 'improved' : session.pain_change > 0 ? 'worsened' : '')
+            : '';
+
+        html += `
+            <div class="cbt-session-card">
+                <div class="cbt-session-header">
+                    <span class="cbt-session-date">${formatDateTime(session.created_at)}</span>
+                    <div class="cbt-session-pain">
+                        <span>Боль: ${session.pain_before} → ${session.pain_after || '—'}</span>
+                        <span class="pain-change ${painChangeClass}">(${painChangeText})</span>
+                    </div>
+                </div>
+
+                <div class="cbt-answers">
+                    ${session.answers.map(a => `
+                        <div class="cbt-answer ${a.skipped ? 'skipped' : ''}">
+                            <div class="cbt-question">${a.question_number}. ${escapeHtml(a.question_text)}</div>
+                            <div class="cbt-answer-text">${a.skipped ? '<em>Пропущено</em>' : escapeHtml(a.answer)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
 // === ДОМАШНИЕ ЗАДАНИЯ ===
 
 // Загрузить статистику домашек
@@ -400,5 +456,6 @@ async function deleteHomework(homeworkId) {
 // Инициализация
 loadStats();
 loadEntries();
+loadCbtSessions();
 loadHomeworkStats();
 loadHomeworkList();

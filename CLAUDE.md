@@ -25,7 +25,8 @@
 - **Frontend:** Vanilla JS, раздаётся Flask через `send_from_directory`
 - **Клиент:** `frontend/client/` — дневник, техники, профиль, домашки
 - **Психолог:** `frontend/psychologist/` — отдельная папка, раздача через `/psychologist/`
-- **Модули без Blueprint** — функции-импорты (diary.py, techniques.py, profile.py, psychologist.py, homework.py → app.py)
+- **Модули без Blueprint** — функции-импорты (diary.py, techniques.py, profile.py, psychologist.py, homework.py, cbt.py → app.py)
+- **КБТ-сессии** — 5 вопросов при отказе от техники, переоценка боли, сохранение в БД, видно психологу
 - **venv обязателен** — глобальная установка пакетов запрещена (см. VENV_INSTRUCTIONS.md)
 - **Шкала боли** — медицинский стандарт: 1 = нет боли, 10 = невыносимая. Отрицательный pain_change = улучшение
 - **Chart.js** (v4.4.0, CDN) — стандартная ось Y (снижение графика = улучшение)

@@ -788,6 +788,83 @@ h3 {
     flex: 1;
 }
 
+/* === КБТ-сессии === */
+
+.cbt-modal {
+    max-width: 540px;
+}
+
+.cbt-progress {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.cbt-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    resize: vertical;
+    margin-bottom: 20px;
+}
+
+.cbt-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.cbt-subtitle {
+    font-size: 14px;
+}
+
+.cbt-pain-scale {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.cbt-pain-btn {
+    padding: 14px 0;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cbt-pain-btn:hover {
+    border-color: var(--accent);
+}
+
+.cbt-pain-btn.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+.support-modal {
+    text-align: center;
+}
+
+.support-message {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--text-primary);
+    margin-bottom: 28px;
+}
+
 /* === Модуль 5: Домашние задания === */
 
 .filter-tabs {

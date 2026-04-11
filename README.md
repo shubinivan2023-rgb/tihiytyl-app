@@ -94,6 +94,7 @@ tihiytyl-app/
 │   ├── recommendations.py  # Персонализированные рекомендации
 │   ├── psychologist.py     # Дашборд психолога
 │   ├── homework.py         # Домашние задания
+│   ├── cbt.py              # КБТ-сессии (5 вопросов)
 │   ├── requirements.txt    # Зависимости Python
 │   └── audio/techniques/   # Аудио-файлы техник (не в git)
 ├── frontend/client/         # Интерфейс клиента

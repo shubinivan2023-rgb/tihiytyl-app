@@ -368,6 +368,91 @@ section h2 {
     }
 }
 
+/* === КБТ-сессии === */
+
+.cbt-section {
+    margin-bottom: 40px;
+}
+
+.cbt-sessions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cbt-session-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px;
+    border-left: 4px solid var(--accent);
+}
+
+.cbt-session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cbt-session-date {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.cbt-session-pain {
+    font-size: 14px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pain-change {
+    font-weight: 600;
+}
+
+.pain-change.improved {
+    color: #4CAF50;
+}
+
+.pain-change.worsened {
+    color: #E57373;
+}
+
+.cbt-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cbt-answer {
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.cbt-answer.skipped {
+    opacity: 0.6;
+}
+
+.cbt-question {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.cbt-answer-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+.cbt-answer-text em {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
 /* === Модуль 5: Домашние задания === */
 
 /* Модальное окно */

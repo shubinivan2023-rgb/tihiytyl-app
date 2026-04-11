@@ -24,6 +24,7 @@ from homework import (
     complete_homework, skip_homework,
     delete_homework, get_homework_stats
 )
+from cbt import save_cbt_session, get_cbt_sessions
 
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'client')
 PSYCHOLOGIST_DIR = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'psychologist')
@@ -323,6 +324,34 @@ def api_get_homework_stats(user_id):
     try:
         result = get_homework_stats(user_id)
         return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# === КБТ-сессии ===
+
+@app.route('/api/cbt/save', methods=['POST'])
+def api_save_cbt_session():
+    data = request.get_json(silent=True)
+    if not data or 'pain_before' not in data or 'answers' not in data:
+        return jsonify({'error': 'pain_before и answers обязательны', 'success': False}), 400
+    try:
+        result = save_cbt_session(
+            data.get('diary_entry_id'),
+            data['pain_before'],
+            data.get('pain_after'),
+            data['answers']
+        )
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False}), 500
+
+
+@app.route('/api/cbt/sessions/<int:user_id>', methods=['GET'])
+def api_get_cbt_sessions(user_id):
+    try:
+        sessions = get_cbt_sessions(user_id)
+        return jsonify({'sessions': sessions})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

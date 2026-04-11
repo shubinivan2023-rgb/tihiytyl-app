@@ -146,7 +146,7 @@ function handleTechniqueResult(result) {
         // Значительное улучшение (боль уменьшилась на 2+)
         messageEl.textContent = 'Отлично! Тебе стало значительно лучше';
         actionsEl.innerHTML = `
-            <a href="entries.html" class="btn-primary">К записям</a>
+            <a href="index.html" class="btn-primary">На главную</a>
         `;
     } else if (painChange <= -1 && sequenceIndex < 2) {
         // Небольшое улучшение, можно предложить ещё
@@ -154,7 +154,7 @@ function handleTechniqueResult(result) {
         actionsEl.innerHTML = `
             <div style="display:flex; gap:10px; flex-direction:column;">
                 <button onclick="startNextTechnique()" class="btn-primary">Да, попробуем</button>
-                <a href="entries.html" class="btn-secondary" style="text-decoration:none; text-align:center;">Нет, спасибо</a>
+                <button onclick="declineTechnique()" class="btn-secondary">Нет, спасибо</button>
             </div>
         `;
     } else if (painChange > -1 && sequenceIndex < 2) {
@@ -163,7 +163,7 @@ function handleTechniqueResult(result) {
         actionsEl.innerHTML = `
             <div style="display:flex; gap:10px; flex-direction:column;">
                 <button onclick="startNextTechnique()" class="btn-primary">Да, попробуем</button>
-                <a href="entries.html" class="btn-secondary" style="text-decoration:none; text-align:center;">Нет, спасибо</a>
+                <button onclick="declineTechnique()" class="btn-secondary">Нет, спасибо</button>
             </div>
         `;
     } else {
@@ -171,10 +171,11 @@ function handleTechniqueResult(result) {
         if (painChange <= -1) {
             messageEl.textContent = 'Хорошо, есть небольшое улучшение';
         } else {
-            messageEl.textContent = 'Техники не помогли. Рекомендуем связаться с психологом для поддержки.';
+            messageEl.textContent = 'Техники не помогли.';
         }
+        // После 2 техник — предложить поговорить
         actionsEl.innerHTML = `
-            <a href="entries.html" class="btn-primary">К записям</a>
+            <button onclick="declineTechnique()" class="btn-primary">Продолжить</button>
         `;
     }
 }
@@ -190,6 +191,169 @@ async function startNextTechnique() {
     } catch (err) {
         alert('Ошибка загрузки техники');
     }
+}
+
+// Отказ от техники → КБТ-флоу
+function declineTechnique() {
+    document.getElementById('resultScreen').classList.add('hidden');
+    showTalkOfferModal();
+}
+
+// === КБТ-флоу (при отказе от продолжения техник) ===
+
+const CBT_QUESTIONS = [
+    'Опиши свои эмоции не фильтруя: тревога, грусть, страх, злость, обида...',
+    'Какие мысли не дают тебе покоя, что ты всё время прокручиваешь в голове?',
+    'Чего ты боишься? Страхи, сомнения, риски... Опиши их все.',
+    'Чего ты сейчас хочешь? Опиши свои желания и потребности.',
+    'Что ты сейчас сделал? Расскажи о своих действиях которые ты предпринял.',
+];
+
+let cbtAnswers = [];
+
+function showTalkOfferModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h3>А хочешь мы просто поговорим?</h3>
+            <div class="modal-actions">
+                <button class="btn-primary" id="talkYesBtn">Да</button>
+                <button class="btn-secondary" id="talkNoBtn">Нет</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('talkYesBtn').addEventListener('click', () => {
+        modal.remove();
+        cbtAnswers = [];
+        showCbtQuestion(0);
+    });
+
+    document.getElementById('talkNoBtn').addEventListener('click', () => {
+        modal.remove();
+        showSupportMessage();
+    });
+}
+
+function showCbtQuestion(index) {
+    if (index >= CBT_QUESTIONS.length) {
+        showCbtPainEvaluation();
+        return;
+    }
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content cbt-modal">
+            <div class="cbt-progress">Вопрос ${index + 1} из ${CBT_QUESTIONS.length}</div>
+            <h3>${CBT_QUESTIONS[index]}</h3>
+            <textarea id="cbtAnswer" class="cbt-textarea" placeholder="Напиши здесь..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-primary" id="cbtNextBtn">Далее</button>
+                <button class="btn-secondary" id="cbtSkipBtn">Пропустить вопрос</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('cbtNextBtn').addEventListener('click', () => {
+        const answer = document.getElementById('cbtAnswer').value.trim();
+        cbtAnswers.push({ question_number: index + 1, answer: answer || '', skipped: !answer });
+        modal.remove();
+        showCbtQuestion(index + 1);
+    });
+
+    document.getElementById('cbtSkipBtn').addEventListener('click', () => {
+        cbtAnswers.push({ question_number: index + 1, answer: '', skipped: true });
+        modal.remove();
+        showCbtQuestion(index + 1);
+    });
+}
+
+function showCbtPainEvaluation() {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content cbt-modal">
+            <h3>На сколько плохо ты себя ощущаешь?</h3>
+            <p class="cbt-subtitle">По шкале от 1 до 10, где 10 — максимально плохо</p>
+            <div class="cbt-pain-scale">
+                ${[1,2,3,4,5,6,7,8,9,10].map(n => `
+                    <button class="cbt-pain-btn" data-value="${n}">${n}</button>
+                `).join('')}
+            </div>
+            <button class="btn-primary hidden" id="cbtSubmitPainBtn">Готово</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+
+    let cbtPainAfter = null;
+
+    modal.querySelectorAll('.cbt-pain-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            modal.querySelectorAll('.cbt-pain-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            cbtPainAfter = parseInt(btn.dataset.value);
+            document.getElementById('cbtSubmitPainBtn').classList.remove('hidden');
+        });
+    });
+
+    document.getElementById('cbtSubmitPainBtn').addEventListener('click', async () => {
+        await saveCbtSession(cbtPainAfter);
+        modal.remove();
+        showCbtResultMessage(cbtPainAfter);
+    });
+}
+
+async function saveCbtSession(cbtPainAfter) {
+    try {
+        await fetch(`${API_BASE}/api/cbt/save`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                diary_entry_id: diaryEntryId ? parseInt(diaryEntryId) : null,
+                pain_before: painBefore,
+                pain_after: cbtPainAfter,
+                answers: cbtAnswers
+            })
+        });
+    } catch (err) {
+        console.error('Ошибка сохранения КБТ-сессии:', err);
+    }
+}
+
+function showCbtResultMessage(cbtPainAfter) {
+    const change = cbtPainAfter - painBefore;
+    let message;
+    if (change <= -2) {
+        message = 'Ты молодец, что поговорил о своих чувствах. Тебе уже лучше — это важно.';
+    } else if (change <= -1) {
+        message = 'Хорошо, что ты смог выразить свои мысли. Маленькие шаги — тоже шаги.';
+    } else {
+        message = 'Спасибо, что поделился. Помни — ты не один, и обратиться к психологу не стыдно.';
+    }
+    showFinalMessage(message);
+}
+
+function showSupportMessage() {
+    showFinalMessage('Помни, что я рядом. Ты можешь всегда вернуться.');
+}
+
+function showFinalMessage(message) {
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+        <div class="modal-content support-modal">
+            <p class="support-message">${message}</p>
+            <button class="btn-primary" id="supportOkBtn">На главную</button>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById('supportOkBtn').addEventListener('click', () => {
+        window.location.href = 'index.html';
+    });
 }
 
 // Инициализация
