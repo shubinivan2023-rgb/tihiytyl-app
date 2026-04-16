@@ -70,7 +70,13 @@
 
         <!-- Записи дневника -->
         <section class="entries-section">
-            <h2>Записи дневника</h2>
+            <div class="entries-header">
+                <h2>Записи дневника</h2>
+                <div class="date-filter">
+                    <input type="date" id="dateFilter" class="date-input">
+                    <button id="resetDateFilter" class="btn-secondary btn-small hidden">Сбросить</button>
+                </div>
+            </div>
             <div id="entriesTable"></div>
             <button id="loadMoreBtn" class="btn-secondary hidden">
                 Загрузить ещё
@@ -81,6 +87,9 @@
         <section class="cbt-section">
             <h2>КБТ-сессии (разговоры)</h2>
             <div id="cbtSessionsList"></div>
+            <button id="loadMoreCbtBtn" class="btn-secondary hidden">
+                Загрузить ещё
+            </button>
         </section>
 
         <!-- Домашние задания -->

@@ -241,7 +241,8 @@ def api_get_client_entries(user_id):
     try:
         limit = request.args.get('limit', 50, type=int)
         offset = request.args.get('offset', 0, type=int)
-        result = get_client_entries(user_id, limit, offset)
+        date = request.args.get('date', None, type=str)
+        result = get_client_entries(user_id, limit, offset, date=date)
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -350,8 +351,10 @@ def api_save_cbt_session():
 @app.route('/api/cbt/sessions/<int:user_id>', methods=['GET'])
 def api_get_cbt_sessions(user_id):
     try:
-        sessions = get_cbt_sessions(user_id)
-        return jsonify({'sessions': sessions})
+        limit = request.args.get('limit', 20, type=int)
+        offset = request.args.get('offset', 0, type=int)
+        data = get_cbt_sessions(user_id, limit=limit, offset=offset)
+        return jsonify(data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

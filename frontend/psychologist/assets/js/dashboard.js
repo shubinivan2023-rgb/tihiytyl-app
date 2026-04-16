@@ -15,7 +15,13 @@ document.getElementById('clientCode').textContent = clientCode;
 
 // Пагинация
 let currentOffset = 0;
-const ENTRIES_PER_PAGE = 20;
+const ENTRIES_PER_PAGE = 10;
+let activeFilterDate = null;
+let rawTimeline = []; // Сырые данные timeline для маппинга клика → дата
+
+// Пагинация КБТ
+let cbtOffset = 0;
+const CBT_PER_PAGE = 10;
 
 // Загрузить статистику
 async function loadStats() {
@@ -53,6 +59,7 @@ function renderChart(timeline) {
         return;
     }
 
+    rawTimeline = timeline;
     const dates = timeline.map(t => formatDate(t.date));
     const painLevels = timeline.map(t => t.avg_pain);
 
@@ -69,13 +76,24 @@ function renderChart(timeline) {
                 tension: 0.3,
                 fill: true,
                 pointBackgroundColor: '#4A90A4',
-                pointRadius: 4
+                pointRadius: 4,
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: '#E8ECF0',
+                pointHoverBorderColor: '#4A90A4',
+                pointHoverBorderWidth: 2
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
             aspectRatio: 2.5,
+            onClick: (event, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const date = rawTimeline[index].date; // YYYY-MM-DD
+                    filterByDate(date);
+                }
+            },
             plugins: {
                 legend: { display: false },
                 tooltip: {
@@ -86,8 +104,11 @@ function renderChart(timeline) {
                     borderWidth: 1,
                     displayColors: false,
                     callbacks: {
-                        label: (context) => `Боль: ${context.parsed.y}/10`
-                    }
+                        label: (context) => `Боль: ${context.parsed.y}/10`,
+                        footer: () => 'Нажми, чтобы посмотреть записи за эту дату'
+                    },
+                    footerColor: '#4A90A4',
+                    footerFont: { size: 11 }
                 }
             },
             scales: {
@@ -157,9 +178,11 @@ function renderTechniquesTable(techniques) {
 // Загрузить записи
 async function loadEntries() {
     try {
-        const response = await fetch(
-            `${API_BASE}/api/psychologist/client-entries/${userId}?limit=${ENTRIES_PER_PAGE}&offset=${currentOffset}`
-        );
+        let url = `${API_BASE}/api/psychologist/client-entries/${userId}?limit=${ENTRIES_PER_PAGE}&offset=${currentOffset}`;
+        if (activeFilterDate) {
+            url += `&date=${activeFilterDate}`;
+        }
+        const response = await fetch(url);
         const data = await response.json();
 
         renderEntries(data.entries);
@@ -219,6 +242,38 @@ document.getElementById('loadMoreBtn').addEventListener('click', () => {
     loadEntries();
 });
 
+// Фильтрация записей по дате
+function filterByDate(date) {
+    activeFilterDate = date;
+    currentOffset = 0;
+    document.getElementById('dateFilter').value = date;
+    document.getElementById('resetDateFilter').classList.remove('hidden');
+    loadEntries();
+
+    // Скролл к записям
+    document.querySelector('.entries-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function resetDateFilter() {
+    activeFilterDate = null;
+    currentOffset = 0;
+    document.getElementById('dateFilter').value = '';
+    document.getElementById('resetDateFilter').classList.add('hidden');
+    loadEntries();
+}
+
+// Фильтр по дате — ввод вручную
+document.getElementById('dateFilter').addEventListener('change', (e) => {
+    if (e.target.value) {
+        filterByDate(e.target.value);
+    } else {
+        resetDateFilter();
+    }
+});
+
+// Кнопка сброса
+document.getElementById('resetDateFilter').addEventListener('click', resetDateFilter);
+
 // Выход
 function logout() {
     sessionStorage.clear();
@@ -259,9 +314,18 @@ function escapeHtml(text) {
 
 async function loadCbtSessions() {
     try {
-        const response = await fetch(`${API_BASE}/api/cbt/sessions/${userId}`);
+        const response = await fetch(
+            `${API_BASE}/api/cbt/sessions/${userId}?limit=${CBT_PER_PAGE}&offset=${cbtOffset}`
+        );
         const data = await response.json();
         renderCbtSessions(data.sessions);
+
+        // Показать кнопку «Загрузить ещё» если есть ещё сессии
+        if (cbtOffset + CBT_PER_PAGE < data.total) {
+            document.getElementById('loadMoreCbtBtn').classList.remove('hidden');
+        } else {
+            document.getElementById('loadMoreCbtBtn').classList.add('hidden');
+        }
     } catch (err) {
         console.error('Ошибка загрузки КБТ-сессий:', err);
     }
@@ -270,12 +334,12 @@ async function loadCbtSessions() {
 function renderCbtSessions(sessions) {
     const container = document.getElementById('cbtSessionsList');
 
-    if (sessions.length === 0) {
+    if (sessions.length === 0 && cbtOffset === 0) {
         container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 20px;">Клиент ещё не проходил КБТ-сессии</p>';
         return;
     }
 
-    let html = '<div class="cbt-sessions">';
+    let html = cbtOffset === 0 ? '<div class="cbt-sessions">' : '';
 
     sessions.forEach(session => {
         const painChangeText = session.pain_change !== null
@@ -287,11 +351,12 @@ function renderCbtSessions(sessions) {
 
         html += `
             <div class="cbt-session-card">
-                <div class="cbt-session-header">
+                <div class="cbt-session-header cbt-toggle" onclick="this.closest('.cbt-session-card').classList.toggle('open')">
                     <span class="cbt-session-date">${formatDateTime(session.created_at)}</span>
                     <div class="cbt-session-pain">
                         <span>Боль: ${session.pain_before} → ${session.pain_after || '—'}</span>
                         <span class="pain-change ${painChangeClass}">(${painChangeText})</span>
+                        <span class="cbt-chevron">▸</span>
                     </div>
                 </div>
 
@@ -307,9 +372,19 @@ function renderCbtSessions(sessions) {
         `;
     });
 
-    html += '</div>';
-    container.innerHTML = html;
+    if (cbtOffset === 0) {
+        html += '</div>';
+        container.innerHTML = html;
+    } else {
+        container.querySelector('.cbt-sessions').insertAdjacentHTML('beforeend', html);
+    }
 }
+
+// Кнопка «Загрузить ещё» для КБТ
+document.getElementById('loadMoreCbtBtn').addEventListener('click', () => {
+    cbtOffset += CBT_PER_PAGE;
+    loadCbtSessions();
+});
 
 // === ДОМАШНИЕ ЗАДАНИЯ ===
 

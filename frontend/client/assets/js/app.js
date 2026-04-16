@@ -283,10 +283,9 @@ function showCbtQuestion(index) {
         <div class="modal-content cbt-modal">
             <div class="cbt-progress">Вопрос ${index + 1} из ${CBT_QUESTIONS.length}</div>
             <h3>${CBT_QUESTIONS[index]}</h3>
-            <textarea id="cbtAnswer" class="cbt-textarea" placeholder="Напиши здесь..."></textarea>
+            <textarea id="cbtAnswer" class="cbt-textarea" placeholder="Напиши здесь..." required></textarea>
             <div class="modal-actions">
                 <button class="btn-primary" id="cbtNextBtn">Далее</button>
-                <button class="btn-secondary" id="cbtSkipBtn">Пропустить вопрос</button>
             </div>
         </div>
     `;
@@ -295,20 +294,14 @@ function showCbtQuestion(index) {
 
     document.getElementById('cbtNextBtn').addEventListener('click', () => {
         const answer = document.getElementById('cbtAnswer').value.trim();
+        if (!answer) {
+            alert('Напиши что-нибудь');
+            return;
+        }
         cbtAnswers.push({
             question_number: index + 1,
-            answer: answer || '',
-            skipped: !answer
-        });
-        modal.remove();
-        showCbtQuestion(index + 1);
-    });
-
-    document.getElementById('cbtSkipBtn').addEventListener('click', () => {
-        cbtAnswers.push({
-            question_number: index + 1,
-            answer: '',
-            skipped: true
+            answer: answer,
+            skipped: false
         });
         modal.remove();
         showCbtQuestion(index + 1);

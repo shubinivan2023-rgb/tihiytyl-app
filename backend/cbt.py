@@ -44,9 +44,14 @@ def save_cbt_session(diary_entry_id, pain_before, pain_after, answers):
     }
 
 
-def get_cbt_sessions(user_id):
-    """Получить КБТ-сессии клиента для дашборда психолога."""
+def get_cbt_sessions(user_id, limit=20, offset=0):
+    """Получить КБТ-сессии клиента для дашборда психолога с пагинацией."""
     conn = get_db()
+
+    total = conn.execute(
+        'SELECT COUNT(*) as count FROM cbt_sessions WHERE user_id = ?',
+        (user_id,)
+    ).fetchone()['count']
 
     sessions = conn.execute('''
         SELECT cs.id, cs.pain_before, cs.pain_after, cs.pain_change, cs.created_at,
@@ -55,7 +60,8 @@ def get_cbt_sessions(user_id):
         LEFT JOIN diary_entries de ON cs.diary_entry_id = de.id
         WHERE cs.user_id = ?
         ORDER BY cs.created_at DESC
-    ''', (user_id,)).fetchall()
+        LIMIT ? OFFSET ?
+    ''', (user_id, limit, offset)).fetchall()
 
     result = []
     for s in sessions:
@@ -86,4 +92,4 @@ def get_cbt_sessions(user_id):
         })
 
     conn.close()
-    return result
+    return {'sessions': result, 'total': total}

@@ -268,6 +268,49 @@ section h2 {
     color: var(--success);
 }
 
+/* Заголовок записей с фильтром */
+.entries-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.entries-header h2 {
+    margin-bottom: 0;
+}
+
+.date-filter {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.date-input {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+#painChart {
+    cursor: pointer;
+}
+
 /* Таблица записей */
 .entries-table {
     background: var(--bg-card);
@@ -324,8 +367,9 @@ section h2 {
     line-height: 1.6;
 }
 
-/* Кнопка «Загрузить ещё» */
-#loadMoreBtn {
+/* Кнопки «Загрузить ещё» */
+#loadMoreBtn,
+#loadMoreCbtBtn {
     margin-top: 20px;
 }
 
@@ -391,6 +435,8 @@ section h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+    user-select: none;
     margin-bottom: 16px;
     flex-wrap: wrap;
     gap: 8px;
@@ -420,10 +466,26 @@ section h2 {
     color: #E57373;
 }
 
+.cbt-chevron {
+    display: inline-block;
+    transition: transform 0.2s;
+    margin-left: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.cbt-session-card.open .cbt-chevron {
+    transform: rotate(90deg);
+}
+
 .cbt-answers {
-    display: flex;
+    display: none;
     flex-direction: column;
     gap: 12px;
+}
+
+.cbt-session-card.open .cbt-answers {
+    display: flex;
 }
 
 .cbt-answer {

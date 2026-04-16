@@ -152,25 +152,42 @@ def get_client_stats(user_id):
     }
 
 
-def get_client_entries(user_id, limit=50, offset=0):
-    """Все записи дневника клиента"""
+def get_client_entries(user_id, limit=50, offset=0, date=None):
+    """Все записи дневника клиента, с опциональной фильтрацией по дате"""
     conn = get_db()
 
-    total = conn.execute('''
-        SELECT COUNT(*) as count
-        FROM diary_entries
-        WHERE user_id = ?
-    ''', (user_id,)).fetchone()
+    if date:
+        total = conn.execute('''
+            SELECT COUNT(*) as count
+            FROM diary_entries
+            WHERE user_id = ? AND DATE(created_at) = ?
+        ''', (user_id, date)).fetchone()
 
-    entries = conn.execute('''
-        SELECT
-            id, transcription, input_type,
-            pain_level, emoji, created_at
-        FROM diary_entries
-        WHERE user_id = ?
-        ORDER BY created_at DESC
-        LIMIT ? OFFSET ?
-    ''', (user_id, limit, offset)).fetchall()
+        entries = conn.execute('''
+            SELECT
+                id, transcription, input_type,
+                pain_level, emoji, created_at
+            FROM diary_entries
+            WHERE user_id = ? AND DATE(created_at) = ?
+            ORDER BY created_at DESC
+            LIMIT ? OFFSET ?
+        ''', (user_id, date, limit, offset)).fetchall()
+    else:
+        total = conn.execute('''
+            SELECT COUNT(*) as count
+            FROM diary_entries
+            WHERE user_id = ?
+        ''', (user_id,)).fetchone()
+
+        entries = conn.execute('''
+            SELECT
+                id, transcription, input_type,
+                pain_level, emoji, created_at
+            FROM diary_entries
+            WHERE user_id = ?
+            ORDER BY created_at DESC
+            LIMIT ? OFFSET ?
+        ''', (user_id, limit, offset)).fetchall()
 
     conn.close()
 
